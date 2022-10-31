@@ -1,16 +1,22 @@
 ﻿using Cocona;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Win32;
+using System.Diagnostics;
 
 namespace MsixStoreTool.Commands;
 
 internal class MsixCommand
 {
     private readonly IConfiguration _configuration;
+    private readonly string _appDirectory;
+    private readonly string _tempDirectory;
 
     public MsixCommand(IConfiguration configuration)
     {
         this._configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+
+        this._appDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MsixStoreTool");
+        this._tempDirectory = Path.Combine(this._appDirectory, "temp");
     }
 
 
@@ -20,6 +26,8 @@ internal class MsixCommand
         [Argument(Description = "path to the pfx file")] string pfxFile,
         [Argument(Description = "the hash-algorithm like SHA256")] string hashAlgorithm)
     {
+        this.CleanUp();
+
         #region looking for windows sdk
 
         Console.WriteLine("looking for windows sdk...");
@@ -33,25 +41,82 @@ internal class MsixCommand
 
         #endregion
 
-        // create temp directory
-        string tempDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MsixStoreTool", "temp");
-        Directory.CreateDirectory(tempDirectory);
+        #region create temp directory
+
+        Directory.CreateDirectory(this._tempDirectory);
+
+        #endregion
 
         try
         {
-            // load all msix files
+            #region search for msix files
+
+            Console.WriteLine("");
+            Console.WriteLine("search for msix-files");
+
             string[] files = Directory.GetFiles(msixDirectory, "*.msix");
 
-            // copy msix files to temp directory
-            files.ToList().ForEach(x => File.Copy(x, Path.Combine(tempDirectory, Path.GetFileName(x)), true));
+            if (!files.Any())
+            {
+                Console.WriteLine("no msix-files were found");
+
+                this.CleanUp();
+
+                return;
+            }
+
+            Console.WriteLine($"{files.Count()} files found:");
+            files.ToList().ForEach(x => Console.WriteLine(x));
+
+            #endregion
+
+            #region copy msix files to temp
+
+            files.ToList().ForEach(x => File.Copy(x, Path.Combine(this._tempDirectory, Path.GetFileName(x)), true));
+
+            #endregion
+
+            #region generate msixbundle file
+
+            Console.WriteLine("");
+            Console.Write("generate msixbundle...");
 
             // generate msixbundle file in temp
-            // cli: .\makeappx.exe bundle /d "D:\Repos\lk-code\simple-markdown\SimpleMarkdown\AppPackages\SimpleMarkdown_2.1.47.0_Test\" /p "D:\Repos\lk-code\simple-markdown\SimpleMarkdown\AppPackages\SimpleMarkdown_2.1.47.0_Test\SimpleMarkdown_2.1.47.0_x86_x64_arm64.msixbundle"
+            // cli: .\makeappx.exe bundle /d {msix-source-dir} /p {msixbundle-target-file}
+            string makeappxPath = Path.Combine(sdkDirectory, "makeappx.exe");
+            string msixbundleFile = Path.Combine(this._appDirectory, outputMsixFile);
+            this.ExecuteCliCommand(makeappxPath, $"bundle /d {this._tempDirectory} /p {msixbundleFile}");
+
+            Console.WriteLine("    finished");
+
+            #endregion
+
+            #region sign msixbundle
+
+            Console.WriteLine("");
+            Console.Write("sign msixbundle...");
 
             // sign msixbundle file
-            // cli: .\signtool.exe sign /fd SHA256 /a /f "D:\Repos\lk-code\simple-markdown\SimpleMarkdown\SimpleMarkdown_TemporaryKey.pfx" "D:\Repos\lk-code\simple-markdown\SimpleMarkdown\AppPackages\SimpleMarkdown_2.1.47.0_Test\SimpleMarkdown_2.1.47.0_x86_x64_arm64.msixbundle"
+            // cli: .\signtool.exe sign /fd {hashAlgorithm} /a /f {pfx-file} {msixbundle-target-file}
+            string signtoolPath = Path.Combine(sdkDirectory, "signtool.exe");
+            this.ExecuteCliCommand(signtoolPath, $"sign /fd {hashAlgorithm} /a /f {pfxFile} {msixbundleFile}");
+
+            Console.WriteLine("    finished");
+
+            #endregion
+
+            #region copy msixbundle to source directory
 
             // copy msixbundle file from temp to msix-directory
+            string msixTarget = Path.Combine(msixDirectory, Path.GetFileName(msixbundleFile));
+            File.Copy(msixbundleFile, msixTarget, true);
+
+            #endregion
+
+            Console.WriteLine("");
+            Console.Write("msixbundle successfully generated :D");
+            Console.WriteLine("");
+            Console.Write($"your find the msixbundle at '{msixTarget}'");
         }
         catch (Exception exception)
         {
@@ -60,17 +125,38 @@ internal class MsixCommand
         }
         finally
         {
-            try
-            {
-                // delete temp directory
-                Directory.Delete(tempDirectory, true);
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("ERROR");
-                Console.WriteLine(exception.Message);
-            }
+            this.CleanUp();
         }
+    }
+
+    private void CleanUp()
+    {
+        try
+        {
+            // delete temp directory
+            Directory.Delete(this._appDirectory, true);
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine("ERROR");
+            Console.WriteLine(exception.Message);
+        }
+    }
+
+    private void ExecuteCliCommand(string executable, string arguments)
+    {
+        Process process = new Process();
+
+        ProcessStartInfo startInfo = new ProcessStartInfo();
+        startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+        startInfo.FileName = executable;
+        startInfo.Arguments = arguments;
+        startInfo.UseShellExecute = true;
+
+        process.StartInfo = startInfo;
+        process.Start();
+
+        process.WaitForExit();
     }
 
     private static List<string> GetMappedDrives()

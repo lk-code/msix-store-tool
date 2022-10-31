@@ -2,7 +2,7 @@
   "profiles": {
     "MsixStoreTool": {
       "commandName": "Project",
-      "commandLineArgs": "bundle \"D:\\Repos\\lk-code\\simple-markdown\\SimpleMarkdown\\AppPackages\\SimpleMarkdown_2.1.47.0_Test\" \"SimpleMarkdown_2.1.47.0_x86_x64_arm64.msixbundle\" \"D:\\Repos\\lk-code\\simple-markdown\\SimpleMarkdown\\SimpleMarkdown_TemporaryKey.pfx\" SHA-256"
+      "commandLineArgs": "bundle \"D:\\Repos\\lk-code\\simple-markdown\\SimpleMarkdown\\AppPackages\\SimpleMarkdown_2.1.47.0\" \"SimpleMarkdown_2.1.47.0_x86_x64_arm64.msixbundle\" \"D:\\Repos\\lk-code\\simple-markdown\\SimpleMarkdown\\SimpleMarkdown_TemporaryKey.pfx\" SHA-256"
     }
   }
 }
