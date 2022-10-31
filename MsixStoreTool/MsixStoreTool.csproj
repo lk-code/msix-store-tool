@@ -2,15 +2,42 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<AssemblyName>msixtool</AssemblyName>
+		<Authors>lk-code</Authors>
+		<Product>MsixStoreTool</Product>
+		<Description>A small tool (especially for WinUI 3 projects) to easily create a MSIXBUNDLE file for the Microsoft Store from several MSIX files.</Description>
+		<Copyright>MIT</Copyright>
+		<PackageProjectUrl>https://github.com/lk-code/msix-store-tool</PackageProjectUrl>
+		<PackageIcon>icon_128.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/lk-code/msix-store-tool</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackAsTool>True</PackAsTool>
+		<PackageOutputPath>./nupkg</PackageOutputPath>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<IncludeSymbols>False</IncludeSymbols>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<Content Include="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\icon_128.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 
 	<ItemGroup>
