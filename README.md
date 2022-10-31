@@ -1,5 +1,7 @@
 # msix-store-tool
 
+![MsixStoreTool](https://raw.githubusercontent.com/lk-code/msix-store-tool/main/icon_128.png)
+
 A small tool (especially for WinUI 3 projects) to easily create a MSIXBUNDLE file for the Microsoft Store from several MSIX files.
 
 This tool is based on this manual (as of October 2022) [bundle-msix-packages](https://learn.microsoft.com/en-us/windows/msix/packaging-tool/bundle-msix-packages).
