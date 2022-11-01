@@ -2,6 +2,14 @@
 
 ![MsixStoreTool](https://raw.githubusercontent.com/lk-code/msix-store-tool/main/icon_128.png)
 
+[![License](https://img.shields.io/github/license/lk-code/msix-store-tool.svg?style=flat-square)](https://github.com/lk-code/msix-store-tool/blob/master/LICENSE)
+[![Build](https://github.com/lk-code/msix-store-tool/actions/workflows/dotnet.yml/badge.svg)](https://github.com/lk-code/msix-store-tool/actions/workflows/dotnet.yml)
+[![Downloads](https://img.shields.io/nuget/dt/msixtool.svg?style=flat-square)](http://www.nuget.org/packages/msixtool/)
+[![NuGet](https://img.shields.io/nuget/v/msixtool.svg?style=flat-square)](http://nuget.org/packages/msixtool)
+
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=lk-code_msix-store-tool&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=lk-code_msix-store-tool)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=lk-code_msix-store-tool&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=lk-code_msix-store-tool)
+
 A small tool (especially for WinUI 3 projects) to easily create a MSIXBUNDLE file for the Microsoft Store from several MSIX files.
 
 This tool is based on this manual (as of October 2022) [bundle-msix-packages](https://learn.microsoft.com/en-us/windows/msix/packaging-tool/bundle-msix-packages).
