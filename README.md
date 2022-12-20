@@ -15,6 +15,8 @@ A small tool (especially for WinUI 3 projects) to easily create a MSIXBUNDLE fil
 
 This tool is based on this manual (as of October 2022) [bundle-msix-packages](https://learn.microsoft.com/en-us/windows/msix/packaging-tool/bundle-msix-packages).
 
+<a href="https://www.buymeacoffee.com/lk.code" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
 ## install the tool
 
 `dotnet tool install --global msixtool`
